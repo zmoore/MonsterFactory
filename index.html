@@ -23,12 +23,140 @@ left:50%;
 margin-left:-150px;
 }
 
+div.Level{
+width:100px;
+height:100px;
+border:black solid 1px;
+position:absolute;
+}
+
+
+
+
+h1,h2,h3,h4,h5,h6{
+text-align:center;
+}
+
 </style>
 <script>
 function load(){
+	
+	var saveFile;
+	
+	
+	
+	function save(key,value){
+		localStorage[key] = escape(value);
+	}
+	function load(key){
+		return unescape(localStorage[key]);
+	}
 
-document.body.innerHTML = '<div class="MainMenu"><ul><li></li><li></li><li></li></ul></div>'
+	function startLevel(x,x){
+		return function(){
+			alert(x+','+y);
+		}
+	}
 
+
+	///savefile object
+	/*function save(original){
+		if (original){
+			if (typeof(original)!='string')
+				original = original.toString();
+			this.name = unescape(/name:([^;]*);/g.exec(original)[1]);
+		}else{
+			this.name = "";
+			this.scores = [];
+		}
+		this.toString = function(){
+			var result = "(";
+			result += "name:"+escape(name)+";";
+			result += "scores:"+escape(scores.toString())+";";
+			
+			
+			
+			
+			
+		}
+		toString.bind(this);
+		function fromString(){
+			var result = new save();
+			return result;
+		}
+	}*/
+	
+	///creates a splash menu
+	function splash(){
+		document.body.innerHTML = "";
+		//var bodyStr = '<div class="MainMenu"><h1>Monster Factory</h1><ul>';
+
+		var mm = document.createElement("div");
+		mm.className = "MainMenu";
+		var h = document.createElement("h1");
+		mm.appendChild(h).innerText = "Monster Factory";
+		var st = document.createElement("h2");
+		mm.appendChild(st).innerText = "Start";
+		st.className = "Button";
+		st.onclick = function(){
+			//start game
+			
+			
+			levelSelect();
+		};
+
+		/*var ul = document.createElement("ul");
+		mm.appendChild(ul);
+		var li;
+		var ng;
+		var i;
+		for (i = 0; i<5; i++){
+			ul.appendChild(li = document.createElement("li"));
+			if (localStorage[i]==undefined){
+				//bodyStr += '<li onclick="localStorage['+i+']=new ">New Game File '+i+'</li>';
+				li.appendChild(ng = document.createElement("button")).innerText = "New Game File " + i;
+				ng.onclick = function(){
+					saveFile = new save();
+				};
+			}else{
+				//bodyStr += '<li>'+localStorage[i].name+' <div onclick="localstorage['+i+']=undefined;">delete</div></li>';
+				li.innerText = localStorage[i].name + ' ';
+				li.onclick = function()
+				var del = document.createElement("div");
+				del.innerText = '[Delete]';
+				li.appendChild(del).onclick = 'localStorage['+i+'] = undefined;';
+			}
+		}*/
+		
+		//document.body.innerHTML = bodyStr+'</ul></div>';
+		document.body.appendChild(mm);
+	}
+	
+	///Creates a level selection menu
+	function levelSelect(){
+		var menu = document.createElement("div");
+		var level;
+		for (var x = 0; x < 5; x++){
+			for (var y = 0; y < 5; y++){
+				menu.appendChild(level = document.createElement("div"));
+				level.className = "Level"
+				level.style.top = y*100+'px';
+				level.style.left = x*100+'px';
+				level.onclick = startLevel(x,y);
+			}
+		}
+		document.body.innerHTML = "";
+		document.body.appendChild(menu);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	splash();
 }
 </script>
 <title>Monster Factory</title>
