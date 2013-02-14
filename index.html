@@ -4,9 +4,19 @@
 <style>
 /*fill whole screen*/
 html, body {
+background-image: url(metal.jpg);
 margin: 0px;
 width: 100%;
 height: 100%;
+}
+
+*:not(.Selectable){
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
 }
 
 div.MainMenu{
@@ -23,18 +33,48 @@ left:50%;
 margin-left:-150px;
 }
 
-div.Level{
+h1,h2,h3,h4,h5,h6{
+text-align:center;
+}
+
+.Level{
 width:100px;
 height:100px;
 border:black solid 1px;
 position:absolute;
+content: hello;
+
+background-color: #660000;
+
+counter-increment:level;
+}
+.Level:not([style~="left:"]){
+counter-reset:level;
+}
+.Level:before{
+content: " Level " counter(level);
+}
+.Level:after{
+content: "Locked";
 }
 
-
-
-
-h1,h2,h3,h4,h5,h6{
-text-align:center;
+.BodyPart{
+position: absolute;
+background-image: url(monstersprites.png);
+width: 30px;
+}
+.Head{
+background-position-y: 0px;
+height: 10px;
+clip: rect(0px 20px 10px 10px);
+}
+.Torso{
+background-position-y: -10px;
+height: 20px;
+}
+.Legs{
+background-position-y: -30px;
+height: 20px;
 }
 
 </style>
@@ -52,7 +92,7 @@ function load(){
 		return unescape(localStorage[key]);
 	}
 
-	function startLevel(x,x){
+	function startLevel(x,y){
 		return function(){
 			alert(x+','+y);
 		}
@@ -135,13 +175,20 @@ function load(){
 	///Creates a level selection menu
 	function levelSelect(){
 		var menu = document.createElement("div");
+		menu.style.position = "relative";
+		menu.style.width = '0px';
+		menu.style.height = '0px';
+		menu.style.marginTop = "-270px";//negative half height
+		menu.style.marginLeft = "-270px";//negative half width
+		menu.style.top = "50%";
+		menu.style.left = "50%";
 		var level;
-		for (var x = 0; x < 5; x++){
-			for (var y = 0; y < 5; y++){
+		for (var y = 0; y < 5; y++){
+			for (var x = 0; x < 5; x++){
 				menu.appendChild(level = document.createElement("div"));
 				level.className = "Level"
-				level.style.top = y*100+'px';
-				level.style.left = x*100+'px';
+				if (y)level.style.top = y*110+'px';
+				if (x)level.style.left = x*110+'px';
 				level.onclick = startLevel(x,y);
 			}
 		}
