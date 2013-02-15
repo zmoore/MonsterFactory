@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
+<style id="style">
+
 /*fill whole screen*/
-html, body {
+body{
 background-image: url(metal.jpg);
 margin: 0px;
 width: 100%;
@@ -22,6 +23,10 @@ user-select: none;
 div.MainMenu{
 /*TODO: Backround texture here*/
 background-color: #880088;
+
+-webkit-border-radius: 50px;
+-moz-border-radius: 50px;
+border-radius: 50px;
 
 width: 300px;
 height: 350px;
@@ -79,7 +84,20 @@ height: 20px;
 
 </style>
 <script>
-function load(){
+startinterval = setInterval(function(){
+	if (document.body){
+		clearInterval(startinterval);
+		delete startinterval;
+		
+		
+	}else{
+		return;
+	}
+	
+	
+	
+	
+	
 	
 	var saveFile;
 	
@@ -204,11 +222,9 @@ function load(){
 	
 	
 	splash();
-}
+},1);
 </script>
 <title>Monster Factory</title>
 </head>
-<body onload="load()">
-If you are seeing this message, please enable javascript or update your browser
-</body>
+<body>If you are seeing this message, please enable javascript or update your browser</body>
 </html>
