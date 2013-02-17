@@ -10,14 +10,28 @@ margin: 0px;
 width: 100%;
 height: 100%;
 }
+div{
+margin:0px;
+
+}
 
 *:not(.Selectable){
+cursor: default;
 -webkit-touch-callout: none;
 -webkit-user-select: none;
 -khtml-user-select: none;
 -moz-user-select: none;
 -ms-user-select: none;
 user-select: none;
+}
+
+.Centered{
+position: absolute;
+margin:	auto;
+top: 0;
+right: 0;
+bottom: 0;
+left: 0;
 }
 
 div.MainMenu{
@@ -30,37 +44,76 @@ border-radius: 50px;
 
 width: 300px;
 height: 350px;
-
-position:absolute;
-top:50%;
-margin-top:-175px;
-left:50%;
-margin-left:-150px;
 }
 
 h1,h2,h3,h4,h5,h6{
-text-align:center;
+text-align: center;
 }
+
 
 .Level{
-width:100px;
-height:100px;
-border:black solid 1px;
-position:absolute;
-content: hello;
+margin: 4px;
+width: 100px;
+height: 100px;
+display: inline-block;
+position: relative;
+
+border: black solid 1px;
+-webkit-border-radius: 15px;
+-moz-border-radius: 15px;
+border-radius: 15px;
 
 background-color: #660000;
+}
+.Level.Locked{
+-webkit-filter: grayscale(100%);  /* safari/chrome */
+-moz-filter: grayscale(100%); /* firefox */
+-ms-filter: grayscale(100%);  /* IE >= 9 */
+-o-filter: grayscale(100%); /* Opera, if support CSS3 */
 
-counter-increment:level;
+filter: gray;
+filter: grayscale(100%); /* edge browsers */
 }
-.Level:not([style~="left:"]){
-counter-reset:level;
+
+.Cell{
+width: 50px;
+height: 50px;
+background-image: url(tiles.jpg);
+display: table-cell;
 }
-.Level:before{
-content: " Level " counter(level);
+.Cell:not(.Locked):hover{
+/*-webkit-filter: brightness(10%);*/
+/*filter: brightness(10%);*/
+opacity: 0.85;
 }
-.Level:after{
-content: "Locked";
+/*.Cell.Locked:hover:after{
+content: "locked"; Caused issues in FF
+}*/
+.Belt{
+background-position: -50px /*<<step*/50px/*step>>*/;
+}
+.Up{
+}
+.Right{
+transform:rotate(90deg);
+-ms-transform:rotate(90deg); /* IE 9 */
+-moz-transform:rotate(90deg); /* Firefox */
+-webkit-transform:rotate(90deg); /* Safari and Chrome */
+-o-transform:rotate(90deg); /* Opera */
+}
+.Down{
+transform:rotate(180deg);
+-ms-transform:rotate(180deg); /* IE 9 */
+-moz-transform:rotate(180deg); /* Firefox */
+-webkit-transform:rotate(180deg); /* Safari and Chrome */
+-o-transform:rotate(180deg); /* Opera */
+}
+.Left{
+transform:rotate(270deg);
+-ms-transform:rotate(270deg); /* IE 9 */
+-moz-transform:rotate(270deg); /* Firefox */
+-webkit-transform:matrix(0, -1, 1, 0, 0, 0); /* Safari and Chrome */
+-o-transform:rotate(270deg); /* Opera */
 }
 
 .BodyPart{
@@ -85,37 +138,22 @@ height: 20px;
 </style>
 <script>
 startinterval = setInterval(function(){
+	//Wait until body is ready
 	if (document.body){
 		clearInterval(startinterval);
 		delete startinterval;
-		
-		
 	}else{
 		return;
 	}
-	
-	
-	
-	
-	
-	
+
+	//////////
 	var saveFile;
-	
-	
-	
 	function save(key,value){
 		localStorage[key] = escape(value);
 	}
 	function load(key){
 		return unescape(localStorage[key]);
 	}
-
-	function startLevel(x,y){
-		return function(){
-			alert(x+','+y);
-		}
-	}
-
 
 	///savefile object
 	/*function save(original){
@@ -143,18 +181,20 @@ startinterval = setInterval(function(){
 			return result;
 		}
 	}*/
+	//////////
 	
-	///creates a splash menu
+	
+	///Function splash: creates a splash menu
 	function splash(){
 		document.body.innerHTML = "";
 		//var bodyStr = '<div class="MainMenu"><h1>Monster Factory</h1><ul>';
 
 		var mm = document.createElement("div");
-		mm.className = "MainMenu";
+		mm.className = "Centered MainMenu";
 		var h = document.createElement("h1");
-		mm.appendChild(h).innerText = "Monster Factory";
+		mm.appendChild(h).innerHTML = "Monster Factory";
 		var st = document.createElement("h2");
-		mm.appendChild(st).innerText = "Start";
+		mm.appendChild(st).innerHTML = "Start";
 		st.className = "Button";
 		st.onclick = function(){
 			//start game
@@ -172,16 +212,16 @@ startinterval = setInterval(function(){
 			ul.appendChild(li = document.createElement("li"));
 			if (localStorage[i]==undefined){
 				//bodyStr += '<li onclick="localStorage['+i+']=new ">New Game File '+i+'</li>';
-				li.appendChild(ng = document.createElement("button")).innerText = "New Game File " + i;
+				li.appendChild(ng = document.createElement("button")).innerHTML = "New Game File " + i;
 				ng.onclick = function(){
 					saveFile = new save();
 				};
 			}else{
 				//bodyStr += '<li>'+localStorage[i].name+' <div onclick="localstorage['+i+']=undefined;">delete</div></li>';
-				li.innerText = localStorage[i].name + ' ';
+				li.innerHTML = localStorage[i].name + ' ';
 				li.onclick = function()
 				var del = document.createElement("div");
-				del.innerText = '[Delete]';
+				del.innerHTML = '[Delete]';
 				li.appendChild(del).onclick = 'localStorage['+i+'] = undefined;';
 			}
 		}*/
@@ -190,36 +230,115 @@ startinterval = setInterval(function(){
 		document.body.appendChild(mm);
 	}
 	
-	///Creates a level selection menu
+	///Function levelSelect: Creates a level selection menu
 	function levelSelect(){
 		var menu = document.createElement("div");
-		menu.style.position = "relative";
-		menu.style.width = '0px';
-		menu.style.height = '0px';
-		menu.style.marginTop = "-270px";//negative half height
-		menu.style.marginLeft = "-270px";//negative half width
-		menu.style.top = "50%";
-		menu.style.left = "50%";
-		var level;
-		for (var y = 0; y < 5; y++){
-			for (var x = 0; x < 5; x++){
-				menu.appendChild(level = document.createElement("div"));
+		menu.className = "Centered"
+		menu.style.width = "560px";	//(Level.margin*2+Level.width)*5
+		menu.style.height = "560px";	//(Level.margin*2+Level.height)*5
+		//menu.style.overflowX = "scroll";
+		//menu.style.overflowY = "hidden";
+		var cotainer,level;
+		for (var i in levels){
+			menu.appendChild(container = document.createElement("div"));
+			for (var j in levels[i]){
+				container.appendChild(level = document.createElement("div"));
 				level.className = "Level"
-				if (y)level.style.top = y*110+'px';
-				if (x)level.style.left = x*110+'px';
-				level.onclick = startLevel(x,y);
+				level.onclick = startLevel(i,j);
+				level.appendChild(document.createTextNode((i)+"-"+(j)+"   "+levels[i][j].name));
 			}
 		}
 		document.body.innerHTML = "";
 		document.body.appendChild(menu);
 	}
 	
+	///Function startLevel: creates a function closure that creates a level
+	///
+	//args:
+	///type: string representing the type of the level
+	///levelNum: number from 1-5
+	///
+	///Arguments correspond to a level from levels[type][levelNum]
+	function startLevel(type, levelNum){
+		return function(){
+			levels[type][levelNum].start();
+		}
+	}
 	
+	///Class level: contains data for a level
+	///
+	//args:
+	///name: String representing level name
+	///width: number of cells per row
+	///height: number of cells per column
+	///onStart: function that is called after the level is loaded with start()
+	///lockedCells: cells that cannot be changed by the user
+	function level(name, width, height, onStart/*, lockedCells...*/){
+		this.lockedCells = Array();
+		for (var i = 4; i < arguments.length; i++){
+			if (arguments[i] != undefined){
+				this.lockedCells.push(arguments[i]);
+			}
+		}
+		this.name = name;
+		//this.witdh = width;
+		//this.height = height;
+		this.start = function(){
+			document.body.innerHTML="";
+			var	cell,
+				container,
+				grid = document.createElement("div");
+			grid.className = "Centered";
+			grid.style.width = width*50+'px';
+			grid.style.height = height*50+'px';
+			grid.style.backgroundColor = "#fff";
+			for (var y = 0; y < height; y++){
+				grid.appendChild(container = document.createElement("div"));
+				for (var x = 0; x < width; x++){
+					container.appendChild(cell = document.createElement("div"));
+					cell.className = "Cell"
+				}
+			}
+			for (var i in this.lockedCells){
+				grid.childNodes[this.lockedCells[i].y].childNodes[this.lockedCells[i].x].className = this.lockedCells[i].className;
+			}
+			document.body.appendChild(grid);
+			if (onStart)
+				onStart();
+		}
+	}
 	
+	///Array level: Array of all levels
+	///Battle:	Create a team via belt and try to defeat as many waves of enemies as possible
+	///Blitz:	You are given an enemy at a time and have to create a monster to defeat all enemies before time runs out
+	///Organize:	Monsters come down a conveyor belt and you have to sort them into their proper bins
+	///Pattern:	Create a machine that makes monsters in a proper pattern
+	///Algorithm:	You are given a monster at a time and have to modify it (I/O)
+	var levels = {
+		"Battle":	[],
+		"Blitz":	[],
+		"Organize":	[],
+		"Pattern":	[],
+		"Algorithm":	[
+			new level("Medusa",5,5,false,
+				{x:0,y:2,className:"Locked Left Belt Cell"},
+				{x:1,y:2,className:"Locked Left Belt Cell"},
+				{x:2,y:2,className:"Locked Left Belt Cell"}
+				)]
+	}
 	
-	
-	
-	
+/*	
+	///Class cell: represents a single square inside the playing field
+	//args:
+	///x: the X-position within the playing field
+	///y: the Y-position within the playing field
+	///class: string of classes to be applied to the cell's element
+	function cell(x,y,className){
+		this.x = x;
+		this.y = y;
+		this.className = className;
+	}
+*/	
 	
 	splash();
 },1);
