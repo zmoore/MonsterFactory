@@ -76,8 +76,8 @@ filter: grayscale(100%); /* edge browsers */
 }
 
 .Cell{
-width: 50px;
-height: 50px;
+width: 60px;
+height: 60px;
 background-image: url(tiles.jpg);
 display: table-cell;
 }
@@ -90,7 +90,15 @@ opacity: 0.85;
 content: "locked"; Caused issues in FF
 }*/
 .Belt{
-background-position: -50px /*<<step*/50px/*step>>*/;
+background-position: -60px /*<<step*/0px/*step>>*/;
+}
+.Executioner{
+background-position: -120px 0px;
+transform: none !important;
+-ms-transform: none !important;
+-moz-transform: none !important;
+-webkit-transform: none !important;
+-o-transform: none !important;
 }
 .Up{
 }
@@ -272,10 +280,13 @@ startinterval = setInterval(function(){
 	///width: number of cells per row
 	///height: number of cells per column
 	///onStart: function that is called after the level is loaded with start()
+	///onStep: this function is called every step
+	///onOut: this function is called whenever a monster exits
+	///placeableCells: Array of classNames that represent
 	///lockedCells: cells that cannot be changed by the user
-	function level(name, width, height, onStart/*, lockedCells...*/){
+	function level(name, width, height, onStart, onStep, onOut, placeableCells/*, lockedCells...*/){
 		this.lockedCells = Array();
-		for (var i = 4; i < arguments.length; i++){
+		for (var i = 6; i < arguments.length; i++){
 			if (arguments[i] != undefined){
 				this.lockedCells.push(arguments[i]);
 			}
@@ -287,24 +298,37 @@ startinterval = setInterval(function(){
 			document.body.innerHTML="";
 			var	cell,
 				container,
-				grid = document.createElement("div");
+				grid = document.createElement("div"),
+				blockSelector;
 			grid.className = "Centered";
-			grid.style.width = width*50+'px';
-			grid.style.height = height*50+'px';
-			grid.style.backgroundColor = "#fff";
+			grid.style.width = width*60+'px';
+			grid.style.height = height*60+'px';
+			grid.style.backgroundColor = "#666";
 			for (var y = 0; y < height; y++){
 				grid.appendChild(container = document.createElement("div"));
 				for (var x = 0; x < width; x++){
 					container.appendChild(cell = document.createElement("div"));
-					cell.className = "Cell"
+					cell.className = "Cell";
 				}
 			}
 			for (var i in this.lockedCells){
 				grid.childNodes[this.lockedCells[i].y].childNodes[this.lockedCells[i].x].className = this.lockedCells[i].className;
 			}
+			
 			document.body.appendChild(grid);
 			if (onStart)
 				onStart();
+			var stepInterval = setInterval(function(){
+				var step = 
+				document.getElementById("style").innerHTML.replace(
+					/(\/\*<<(.*?)\*\/).*?(\/\*>>\*\/)/g,
+					function(match,left,command,right){
+						return left + eval(command) + right;
+					}
+				);
+				if (onStep)
+					onStep();
+			},50);
 		}
 	}
 	
@@ -320,11 +344,13 @@ startinterval = setInterval(function(){
 		"Organize":	[],
 		"Pattern":	[],
 		"Algorithm":	[
-			new level("Medusa",5,5,false,
-				{x:0,y:2,className:"Locked Left Belt Cell"},
-				{x:1,y:2,className:"Locked Left Belt Cell"},
-				{x:2,y:2,className:"Locked Left Belt Cell"}
-				)]
+			new level("Medusa",5,5,false,false,false,
+				{x:0,y:1,className:"Locked Right Belt Cell"},
+				{x:1,y:1,className:"Locked Right Belt Cell"},
+				{x:2,y:1,className:"Locked Right Belt Cell"},
+				{x:2,y:0,className:"Locked Down Executioner Cell"}
+				)
+			]
 	}
 	
 /*	
